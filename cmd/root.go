@@ -41,6 +41,12 @@ var (
 
 	debug       bool
 	colorOutput bool
+	noexit      bool
+	long        bool
+	warn        bool
+	trace       bool
+	logLevel    string
+	err         error = nil
 )
 
 // exported Version variable
