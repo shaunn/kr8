@@ -1,0 +1,10 @@
+version: 3
+
+tasks:
+  fetch:
+    desc: "fetch component dependencies"
+
+  generate:
+    desc: "generate"
+    cmds:
+      - kr8  generate --components {{.KR8_COMPONENT}} --clusters {{.KR8_CLUSTER}}

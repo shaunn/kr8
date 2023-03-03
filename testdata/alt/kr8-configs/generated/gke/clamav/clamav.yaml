@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: clamav-akp
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: clamav-akp
+  template:
+    metadata:
+      labels:
+        name: clamav-akp
+    spec:
+      containers:
+      - env:
+        - name: AKP_CLAMAV_CRONJOB
+          value: 0 */4 * * * sh -c 'sleep $((RANDOM%3600))'; clamscan --stdout --infected
+            /host-fs/tmp /host-fs/var/tmp /host-fs/var/spool/mail >> /var/log/clamav/clamscan.log
+            2>&1
+        - name: CLAMAV_NO_CLAMD
+          value: "true"
+        - name: CLAMAV_NO_MILTERD
+          value: "true"
+        image: 493203180918.dkr.ecr.null.amazonaws.com/akp/releases/clamav-akp:0.104.1-1
+        imagePullPolicy: IfNotPresent
+        name: clamav-akp
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2Gi
+          requests:
+            cpu: "0"
+            memory: "0"
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /host-fs/var
+          name: host-vol-var
+          readOnly: true
+        - mountPath: /host-fs/tmp
+          name: host-vol-tmp
+          readOnly: true
+        - mountPath: /var/log/clamav/
+          name: logs
+      nodeSelector:
+        node-role.akp/node: ""
+      serviceAccount: clamav-akp-sa
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - operator: Exists
+      volumes:
+      - hostPath:
+          path: /var
+        name: host-vol-var
+      - hostPath:
+          path: /tmp
+        name: host-vol-tmp
+      - hostPath:
+          path: /var/log/clamav
+          type: DirectoryOrCreate
+        name: logs
+  updateStrategy:
+    type: RollingUpdate
+

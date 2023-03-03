@@ -1,0 +1,118 @@
+{
+   "output": "prefixed",
+   "tasks": {
+      "cursedone": {
+         "cmds": [
+            {
+               "task": "cursedone_taskfile"
+            },
+            "task -d tmp/cursedone generate"
+         ],
+         "desc": "generate components for cursedone"
+      },
+      "cursedone_deploy": {
+         "cmds": [
+            "task -d tmp/cursedone deploy"
+         ],
+         "desc": "deploy all components for cluster: cursedone"
+      },
+      "cursedone_dryrun": {
+         "cmds": [
+            "task -d tmp/cursedone dryrun"
+         ],
+         "desc": "dryrun all components for cluster: cursedone"
+      },
+      "cursedone_taskfile": {
+         "cmds": [
+            "mkdir -p tmp/cursedone",
+            "kr8 jsonnet render --cluster cursedone --format yaml templates/task-generate-cluster-parallel.jsonnet > tmp/cursedone/Taskfile.yml"
+         ],
+         "desc": "generate task file in tmp directory for cluster: cursedone"
+      },
+      "default": {
+         "cmds": [
+            "kr8-helpers check-environment",
+            {
+               "task": "digitalocean"
+            },
+            {
+               "task": "cursedone"
+            },
+            {
+               "task": "gke"
+            }
+         ]
+      },
+      "digitalocean": {
+         "cmds": [
+            {
+               "task": "digitalocean_taskfile"
+            },
+            "task -d tmp/digitalocean generate"
+         ],
+         "desc": "generate components for digitalocean"
+      },
+      "digitalocean_deploy": {
+         "cmds": [
+            "task -d tmp/digitalocean deploy"
+         ],
+         "desc": "deploy all components for cluster: digitalocean"
+      },
+      "digitalocean_dryrun": {
+         "cmds": [
+            "task -d tmp/digitalocean dryrun"
+         ],
+         "desc": "dryrun all components for cluster: digitalocean"
+      },
+      "digitalocean_taskfile": {
+         "cmds": [
+            "mkdir -p tmp/digitalocean",
+            "kr8 jsonnet render --cluster digitalocean --format yaml templates/task-generate-cluster-parallel.jsonnet > tmp/digitalocean/Taskfile.yml"
+         ],
+         "desc": "generate task file in tmp directory for cluster: digitalocean"
+      },
+      "gke": {
+         "cmds": [
+            {
+               "task": "gke_taskfile"
+            },
+            "task -d tmp/gke generate"
+         ],
+         "desc": "generate components for gke"
+      },
+      "gke_deploy": {
+         "cmds": [
+            "task -d tmp/gke deploy"
+         ],
+         "desc": "deploy all components for cluster: gke"
+      },
+      "gke_dryrun": {
+         "cmds": [
+            "task -d tmp/gke dryrun"
+         ],
+         "desc": "dryrun all components for cluster: gke"
+      },
+      "gke_taskfile": {
+         "cmds": [
+            "mkdir -p tmp/gke",
+            "kr8 jsonnet render --cluster gke --format yaml templates/task-generate-cluster-parallel.jsonnet > tmp/gke/Taskfile.yml"
+         ],
+         "desc": "generate task file in tmp directory for cluster: gke"
+      },
+      "taskfiles": {
+         "cmds": [
+            {
+               "task": "digitalocean_taskfile"
+            },
+            {
+               "task": "cursedone_taskfile"
+            },
+            {
+               "task": "gke_taskfile"
+            }
+         ],
+         "desc": "generate task files for all clusters"
+      }
+   },
+   "version": "2"
+}

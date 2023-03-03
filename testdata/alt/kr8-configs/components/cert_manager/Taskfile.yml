@@ -1,0 +1,21 @@
+version: 2
+
+vars:
+  KR8_COMPONENT: cert_manager
+  CHART_VER: v0.4.0
+  CHART_NAME: cert-manager
+
+tasks:
+  fetch:
+    desc: "fetch component dependencies"
+    cmds:
+      - rm -fr charts; mkdir charts
+      - helm fetch --repo https://charts.helm.sh/stable --untar --untardir ./charts --version "{{.CHART_VER}}" "{{.CHART_NAME}}"
+#      - helm fetch --repo https://charts.helm.sh/stable --untar --untardir ./charts --version "{{.CHART_VER}}" "{{.CHART_NAME}}"
+
+
+  generate:
+    desc: "generate"
+    cmds:
+      - kr8 --base {{.KR8_BASE}} generate --components {{.KR8_COMPONENT}} --clusters {{.KR8_CLUSTER}}
+
