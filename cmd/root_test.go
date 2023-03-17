@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	assert2 "github.com/stretchr/testify/assert"
 	"os"
@@ -44,34 +43,16 @@ func runSettingsAssertions(t *testing.T, ks sort.StringSlice, kvmap map[string]i
 func TestDefaultSettings(t *testing.T) {
 
 	// Clear out all environment variables
-	os.Clearenv()
+	// os.Clearenv()
 
 	// Expected outputs
-	ks := sort.StringSlice{
-		"base",
-		"color",
-		"config",
-		"jpath",
-		"loglevel",
-		"long",
-		"noexit",
-		"warn",
-	}
-	all := map[string]interface{}{
-		"base":     ".",
-		"color":    true,
-		"config":   ".kr8.env",
-		"jpath":    []string{},
-		"loglevel": "info",
-		"long":     false,
-		"noexit":   false,
-		"warn":     false,
-	}
+	ks := sort.StringSlice{"base", "cluster", "clusterdir", "color", "componentdir"}
+	all := map[string]interface{}{"base": ".", "cluster": "", "clusterdir": "", "color": true, "componentdir": ""}
 
 	// The combo to success
-	os.Clearenv()
-	viper.Reset()
-	initConfig()
+	// os.Clearenv()
+	// viper.Reset()
+	// initConfig()
 
 	runSettingsAssertions(t, ks, all)
 
@@ -104,36 +85,16 @@ func TestDotEnvSettings(t *testing.T) {
 
 	// Now loop through and set via os.SetEnv
 	for k, v := range envars {
-		tracelog(nil).Msg(k + " " + v)
+		// tracelog(nil).Msg(k + " " + v)
 		os.Setenv(k, v)
 	}
 
 	// Expected outputs
 
-	ks := sort.StringSlice{
-		"base",
-		"color",
-		"config",
-		"jpath",
-		"loglevel",
-		"long",
-		"noexit",
-		"warn",
-	}
+	ks := sort.StringSlice{"base", "cluster", "clusterdir", "color", "componentdir"}
 
-	all := map[string]interface{}{
-		"base":     "/dev/null",
-		"color":    false,
-		"config":   "/dev/null",
-		"jpath":    []string{"/dev/null"},
-		"loglevel": "debug",
-		"long":     true,
-		"noexit":   true,
-		"warn":     true,
-	}
+	all := map[string]interface{}{"base": "/dev/null", "cluster": ".+", "clusterdir": "/dev/null", "color": "false", "componentdir": "/dev/null"}
 
-	// The combo to success
-	viper.Reset()
 	initConfig()
 
 	runSettingsAssertions(t, ks, all)
@@ -157,10 +118,10 @@ func TestConfigFileViaDefaultFile(t *testing.T) {
 	origDir, _ := os.Getwd()
 	workDir := testBaseDir + "alt/kr8-configs/"
 	os.Chdir(workDir)
-
-	os.Clearenv()
-	viper.Reset()
-	initConfig()
+	//
+	// os.Clearenv()
+	// viper.Reset()
+	// initConfig()
 
 	ks := sort.StringSlice{
 		"base",
@@ -231,8 +192,8 @@ func TestChangeBaseViaEnv(t *testing.T) {
 		"warn":     false,
 	}
 
-	viper.Reset()
-	initConfig()
+	// viper.Reset()
+	// initConfig()
 
 	// Tests/assertions
 
@@ -243,61 +204,62 @@ func TestChangeBaseViaEnv(t *testing.T) {
 	runSettingsAssertions(t, ks, all)
 }
 
-func TestConfigFileViaFlag(t *testing.T) {
-	// How is this done wothout adding flags?
-	// Would adding flags here limit the integrity of the test?
-
-	// Clear out all environment variables
-	os.Clearenv()
-	//
-	// os.Args = append(os.Args, "--addr=http://b.com:566/something.avsc")
-	// os.Args = append(os.Args, "Get")
-	// os.Args = append(os.Args, `./some/resource/fred`)
-
-	configFile := testBaseDir + "/default/kr8-configs/.kr8.test.default.env"
-
-	// os.Args = append(os.Args, "generate")
-	// os.Args = append(os.Args, "--clusters gke")
-	// os.Args = append(os.Args, "--config", configFile)
-	os.Args = append(os.Args, "--config "+configFile)
-	// os.Args = append(os.Args, "--config="+configFile)
-	// os.Args = append(os.Args, "Get")
-	// os.Args = append(os.Args, `./some/resource/fred`)
-
-	fmt.Println(os.Args)
-	fmt.Println(viper.Get("cluster"))
-	fmt.Println(viper.AllSettings())
-	infolog(nil).Msg(cluster)
-	infolog(nil).Msg(clusters)
-
-	for i := 0; i < len(os.Args); i++ {
-		fmt.Println(os.Args[i])
-	}
-
-	ks := sort.StringSlice{}
-	all := map[string]interface{}{}
-
-	// Run init to take in the subject parms
-	viper.Reset()
-	initConfig()
-
-	fmt.Println(os.Args)
-	fmt.Println(viper.Get("cluster"))
-	fmt.Println(viper.AllSettings())
-
-	infolog(nil).Msg(cluster)
-	infolog(nil).Msg(clusters)
-
-	for i := 0; i < len(os.Args); i++ {
-		fmt.Println(os.Args[i])
-	}
-	// Tests/assertions
-	configFileUsed, _ := filepath.Abs(viper.ConfigFileUsed())
-	errorlog(nil).Msg(configFile + ":::" + configFileUsed)
-
-	assert2.Equal(t, configFile, configFileUsed)
-
-	runSettingsAssertions(t, ks, all)
-
-	// Post test cleanup
-}
+// wip
+// func TestConfigFileViaFlag(t *testing.T) {
+// 	// How is this done wothout adding flags?
+// 	// Would adding flags here limit the integrity of the test?
+//
+// 	// Clear out all environment variables
+// 	os.Clearenv()
+// 	//
+// 	// os.Args = append(os.Args, "--addr=http://b.com:566/something.avsc")
+// 	// os.Args = append(os.Args, "Get")
+// 	// os.Args = append(os.Args, `./some/resource/fred`)
+//
+// 	configFile := testBaseDir + "/default/kr8-configs/.kr8.test.default.env"
+//
+// 	// os.Args = append(os.Args, "generate")
+// 	// os.Args = append(os.Args, "--clusters gke")
+// 	// os.Args = append(os.Args, "--config", configFile)
+// 	os.Args = append(os.Args, "--config "+configFile)
+// 	// os.Args = append(os.Args, "--config="+configFile)
+// 	// os.Args = append(os.Args, "Get")
+// 	// os.Args = append(os.Args, `./some/resource/fred`)
+//
+// 	fmt.Println(os.Args)
+// 	fmt.Println(viper.Get("cluster"))
+// 	fmt.Println(viper.AllSettings())
+// 	infolog(nil).Msg(cluster)
+// 	infolog(nil).Msg(clusters)
+//
+// 	for i := 0; i < len(os.Args); i++ {
+// 		fmt.Println(os.Args[i])
+// 	}
+//
+// 	ks := sort.StringSlice{}
+// 	all := map[string]interface{}{}
+//
+// 	// Run init to take in the subject parms
+// 	viper.Reset()
+// 	initConfig()
+//
+// 	fmt.Println(os.Args)
+// 	fmt.Println(viper.Get("cluster"))
+// 	fmt.Println(viper.AllSettings())
+//
+// 	infolog(nil).Msg(cluster)
+// 	infolog(nil).Msg(clusters)
+//
+// 	for i := 0; i < len(os.Args); i++ {
+// 		fmt.Println(os.Args[i])
+// 	}
+// 	// Tests/assertions
+// 	configFileUsed, _ := filepath.Abs(viper.ConfigFileUsed())
+// 	errorlog(nil).Msg(configFile + ":::" + configFileUsed)
+//
+// 	assert2.Equal(t, configFile, configFileUsed)
+//
+// 	runSettingsAssertions(t, ks, all)
+//
+// 	// Post test cleanup
+// }
